@@ -2146,7 +2146,7 @@ CJSON_PUBLIC(void) cJSON_InsertItemInArray(cJSON *array, int which, cJSON *newit
 {
     cJSON *after_inserted = NULL;
 
-    if (which < 0)
+    if (which < 0 || newitem == NULL)
     {
         return;
     }
@@ -2156,6 +2156,11 @@ CJSON_PUBLIC(void) cJSON_InsertItemInArray(cJSON *array, int which, cJSON *newit
     {
         add_item_to_array(array, newitem);
         return;
+    }
+
+    if (after_inserted != array->child && newitem->prev == NULL) {
+        /* return false if after_inserted is a corrupted array item */
+        return false;
     }
 
     newitem->next = after_inserted;
